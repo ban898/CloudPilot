@@ -209,15 +209,13 @@ Here's a summary of the setup steps and actions taken:
             steps {
                 checkout scm
             }
-        }
-
+            
         stage('Build Docker Image') {
             steps {
                 script {
                     def dockerImage = docker.build("${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO}:${IMAGE_TAG}")
                 }
-            }
-        }
+  
 
         stage('Push Docker Image to Docker Hub') {
             steps {
@@ -227,10 +225,7 @@ Here's a summary of the setup steps and actions taken:
                             def dockerImage = docker.image("${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO}:${IMAGE_TAG}")
                             dockerImage.push()
                         }
-                    }
-                }
-            }
-        }
+
 
         stage('Deploy Docker Container') {
             steps {
@@ -244,12 +239,6 @@ Here's a summary of the setup steps and actions taken:
 
                         "
                     """
-                }
-            }
-        }
-    }
-}
-
     ```
     
 # Jenkins Pipeline Script
