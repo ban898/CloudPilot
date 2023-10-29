@@ -158,7 +158,10 @@ Here's a summary of the setup steps and actions taken:
 12. **Push Jenkinsfile and Dockerfile:**
 
     - Pushed the Jenkinsfile and the Dockerfile to the GitLab repository.
-    - Triggered the Jenkins job to initiate the pipeline.
+    - Triggered the Jenkins job to initiate the pipeline.                    
+    
+    
+    
 
 
 
