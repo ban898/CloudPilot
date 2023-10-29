@@ -157,6 +157,38 @@ Here's a summary of the setup steps and actions taken:
 
 12. **Push Jenkinsfile and Dockerfile:**
 
+     Dockerfile:
+     ```
+        FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+	WORKDIR /app
+	EXPOSE 80
+
+	FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+	WORKDIR /src
+	COPY ["SimpleWebApp.csproj", "SimpleWebApp/"]
+	COPY ["Program.cs", "SimpleWebApp/"]
+	RUN dotnet restore "SimpleWebApp/SimpleWebApp.csproj"
+	COPY . .
+	RUN ls -l /src/SimpleWebApp
+	WORKDIR "/src/SimpleWebApp"
+	RUN dotnet build "SimpleWebApp.csproj" -c Release -o /app/build
+
+	FROM build AS publish
+	RUN dotnet publish "SimpleWebApp.csproj" -c Release -o /app/publish
+
+	FROM base AS final
+	WORKDIR /app
+	COPY --from=publish /app/publish .
+	ENTRYPOINT ["dotnet", "SimpleWebApp.dll"]
+
+     ```
+     This Dockerfile is used to build a .NET-based web application container image. Here's a concise summary:
+
+    - It starts with the ASP.NET 7.0 base image, sets the working directory, and exposes port 80.
+    - It uses the SDK 7.0 image for building, copies project files, restores dependencies, and builds the app.
+    - It creates a publish stage, publishes the app, and sets up a final stage.
+    - In the final stage, it copies the published app and sets the entry point.
+
     - Pushed the Jenkinsfile and the Dockerfile to the GitLab repository.
     - Triggered the Jenkins job to initiate the pipeline.                    
     
