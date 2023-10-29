@@ -1,7 +1,85 @@
-# Project Structure Overview
+# Project Overview
 
-The project is structured to implement Infrastructure as Code (IaaC) as much as possible, ensuring clarity and ease of understanding.
-The project has EKS cluster with 2 nodes 1 for Jenkins Master and 1 for the Jenkins Agent, outside of the cluster it has EC2 instance with self-hosted GitLab 
+This project is structured around Infrastructure as Code (IaaC) principles, ensuring clarity and ease of understanding. The key components of this project include:
+
+- An EKS cluster with two nodes: one for Jenkins Master and one for the Jenkins Agent.
+- An EC2 instance serving as a self-hosted GitLab.
+- Another EC2 instance for deployment purposes.
+
+## Setup Steps
+
+Here's a summary of the setup steps and actions taken:
+
+1. **Creating the EKS Cluster:**
+
+   - Created the EKS cluster using `eksctl` with a configuration file `cluster.yaml`.
+   - Initialized Terraform with `terraform init`.
+   - Applied Terraform configurations with `terraform apply`.
+
+2. **Setting Up GitLab:**
+
+   - SSHed into one of the EC2 nodes (GITLAB).
+   - Installed Docker and Docker Compose.
+   - Ran the GitLab container using a Docker Compose file.
+   - Created a script to retrieve the public IP of the instance and assign it to the GitLab configuration file.
+   - Created a systemd service called `gitlab-config.service` to run the script on boot.
+
+   Systemd Service Configuration (`gitlab-config.service`):
+   ```ini
+   [Unit]
+   Description=Update GitLab Configuration
+   After=network.target
+
+   [Service]
+   ExecStart=/usr/bin/python3 /home/ubuntu/external_ip.py
+   WorkingDirectory=/home/ubuntu
+   Restart=no
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+Then i signed to the root acc, created a non root user, approved it and created a repository , craeted a PAT and cloned the repository to my persnoal Laptop
+git clone http://44.201.4.72/ban898/project.git to a folder on my personal
+
+Created the devops NS , installed jenkins Helm Chart and CSI driver:
+kubectl apply -f devops-ns.yaml 
+helm repo add jenkins https://charts.jenkins.io
+helm repo update
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=master"
+
+Added the following policies : 
+AmazonEBSCSIDriverPolicy
+AmazonEC2FullAccess
+attached them both to the relevant role 
+
+Installed another Helm chart for ingress but more customized
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install nginx-ingress ingress-nginx/ingress-nginx --namespace kube-system --create-namespace
+jenkins-ingress.yaml 
+kubectl apply -f jenkins-ingress.yaml
+
+Retrived the DNS of the ELB:
+kubectl get svc -n kube-system | grep ingress-nginx-controller
+Added an ingress security rule on port 8080 (to the ELB SG)
+
+logged in to jenkins, Installed required Plugins git gitlab kubernetes Credentials
+Added gitlab token
+created a job of type pipeline named it Elta-test (retrived the job end point for GitLab Integrations)
+
+in Gitlab Integrations I configured a jenkins Integration with the relevant webhook
+Tested the connection and approved it
+
+Logged in to the Deploy instance installed docker (same as i did before)
+
+Created a Jenkinsfile which will checkout, build, push and deploy with the right configuration and variables.
+Pushed a Jenkinsfile and the dockerfile to the repository and triggered a job
+
+
+
+
+
+
 
 
 The breakdown of the directories and their purposes is as follows:
