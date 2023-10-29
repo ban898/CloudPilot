@@ -38,42 +38,127 @@ Here's a summary of the setup steps and actions taken:
    [Install]
    WantedBy=multi-user.target
    ```
-Then i signed to the root acc, created a non root user, approved it and created a repository , craeted a PAT and cloned the repository to my persnoal Laptop
-git clone http://44.201.4.72/ban898/project.git to a folder on my personal
+## GitLab Setup
 
-Created the devops NS , installed jenkins Helm Chart and CSI driver:
-kubectl apply -f devops-ns.yaml 
-helm repo add jenkins https://charts.jenkins.io
-helm repo update
-kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=master"
+1. **Create a Non-Root User and Repository:**
 
-Added the following policies : 
-AmazonEBSCSIDriverPolicy
-AmazonEC2FullAccess
-attached them both to the relevant role 
+   - Signed in to the root account on the EC2 GitLab instance.
+   - Created a non-root user.
+   - Approved the user and created a GitLab repository.
+   - Generated a Personal Access Token (PAT).
+   - Cloned the repository to your personal laptop using the following command:
 
-Installed another Helm chart for ingress but more customized
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm install nginx-ingress ingress-nginx/ingress-nginx --namespace kube-system --create-namespace
-jenkins-ingress.yaml 
-kubectl apply -f jenkins-ingress.yaml
+     ```bash
+     git clone http://44.201.4.72/ban898/project.git
+     ```
 
-Retrived the DNS of the ELB:
-kubectl get svc -n kube-system | grep ingress-nginx-controller
-Added an ingress security rule on port 8080 (to the ELB SG)
+   - Saved the cloned repository to a folder on your laptop.
 
-logged in to jenkins, Installed required Plugins git gitlab kubernetes Credentials
-Added gitlab token
-created a job of type pipeline named it Elta-test (retrived the job end point for GitLab Integrations)
+2. **Create the DevOps Namespace and Install Jenkins Helm Chart and CSI Driver:**
 
-in Gitlab Integrations I configured a jenkins Integration with the relevant webhook
-Tested the connection and approved it
+   - Applied the Kubernetes namespace configuration using:
 
-Logged in to the Deploy instance installed docker (same as i did before)
+     ```bash
+     kubectl apply -f devops-ns.yaml
+     ```
 
-Created a Jenkinsfile which will checkout, build, push and deploy with the right configuration and variables.
-Pushed a Jenkinsfile and the dockerfile to the repository and triggered a job
+   - Added the Jenkins Helm Chart repository:
+
+     ```bash
+     helm repo add jenkins https://charts.jenkins.io
+     ```
+
+   - Updated the Helm repositories:
+
+     ```bash
+     helm repo update
+     ```
+
+   - Installed the AWS EBS CSI driver for storage provisioning using:
+
+     ```bash
+     kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=master"
+     ```
+
+3. **Configure AWS Policies:**
+
+   - Added and attached the following policies to the relevant IAM role:
+
+     - AmazonEBSCSIDriverPolicy
+     - AmazonEC2FullAccess
+
+4. **Install a Customized Ingress Controller:**
+
+   - Added the Helm chart repository for ingress-nginx:
+
+     ```bash
+     helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+     ```
+
+   - Updated the Helm repositories:
+
+     ```bash
+     helm repo update
+     ```
+
+   - Installed the customized ingress-nginx Helm chart into the `kube-system` namespace and created the namespace if it doesn't exist:
+
+     ```bash
+     helm install nginx-ingress ingress-nginx/ingress-nginx --namespace kube-system --create-namespace
+     ```
+
+   - Applied the `jenkins-ingress.yaml` configuration:
+
+     ```bash
+     kubectl apply -f jenkins-ingress.yaml
+     ```
+
+5. **Retrieve the DNS of the ELB:**
+
+   - Retrieved the DNS of the Elastic Load Balancer (ELB) using:
+
+     ```bash
+     kubectl get svc -n kube-system | grep ingress-nginx-controller
+     ```
+
+   - Added an ingress security rule on port 8080 to the ELB Security Group.
+
+## Jenkins Configuration
+
+6. **Login to Jenkins and Install Required Plugins:**
+
+   - Logged in to Jenkins.
+   - Installed the required plugins: git, gitlab, kubernetes, and Credentials.
+
+7. **Add GitLab Token:**
+
+   - Added a GitLab token to Jenkins for integration purposes.
+
+8. **Create a Pipeline Job:**
+
+   - Created a job of type pipeline named "Elta-test."
+   - Retrieved the job endpoint for GitLab Integrations.
+
+9. **Configure GitLab Integration:**
+
+   - Configured a Jenkins Integration in GitLab with the relevant webhook.
+   - Tested the connection and approved it.
+
+## Deploy Instance
+
+10. **Login to the Deploy Instance and Install Docker:**
+
+    - Logged in to the deploy instance.
+    - Installed Docker (same as previously).
+
+11. **Create a Jenkinsfile for Pipeline:**
+
+    - Created a Jenkinsfile that checks out, builds, pushes, and deploys with the correct configuration and variables.
+
+12. **Push Jenkinsfile and Dockerfile:**
+
+    - Pushed the Jenkinsfile and the Dockerfile to the GitLab repository.
+    - Triggered the Jenkins job to initiate the pipeline.
 
 
 
