@@ -191,13 +191,12 @@ Here's a summary of the setup steps and actions taken:
     
     Jenkinsfile:
     ```
-    pipeline {
-   agent {
-        label 'jenkins-jenkins-agent'
-    }
-
-
-    environment {
+    	pipeline {
+   	agent {
+        	label 'jenkins-jenkins-agent'
+    	}
+    	
+    	environment {
         DOCKERHUB_REPO = 'simplewebapp'
         IMAGE_TAG = 'latest'
         REMOTE_HOST = '44.199.183.25'
