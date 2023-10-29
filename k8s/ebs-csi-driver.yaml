@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ebs-csi-driver
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      name: ebs-csi-driver
+  template:
+    metadata:
+      labels:
+        name: ebs-csi-driver
+    spec:
+      hostNetwork: true
+      containers:
+        - name: ebs-csi-driver
+          image: amazon/aws-ebs-csi-driver:v1.4.0  # Adjust to the desired version
+          args:
+            - "--endpoint=unix://tmp/csi.sock"
+            - "--nodeid=$(NODE_NAME)"
+          volumeMounts:
+            - name: plugins
+              mountPath: /var/lib/kubelet/plugins
+            - name: plugins-v1alpha1
+              mountPath: /var/lib/kubelet/plugins/kubernetes.io/csi
+            - name: registration-dir
+              mountPath: /var/lib/kubelet
+        - name: driver-registrar
+          image: quay.io/k8scsi/csi-node-driver-registrar:v1.3.0  # Adjust to the desired version
+          args:
+            - "--v=5"
+            - "--csi-address=$(ADDRESS)"
+            - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
+          volumeMounts:
+            - name: registration-dir
+              mountPath: /registration
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 9808
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 9808
+      volumes:
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet
+            type: DirectoryOrCreate
+        - name: plugins
+          hostPath:
+            path: /var/lib/kubelet/plugins
+            type: DirectoryOrCreate
+        - name: plugins-v1alpha1
+          hostPath:
+            path: /var/lib/kubelet/plugins/kubernetes.io/csi
+            type: DirectoryOrCreate
+        - name: socket-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+

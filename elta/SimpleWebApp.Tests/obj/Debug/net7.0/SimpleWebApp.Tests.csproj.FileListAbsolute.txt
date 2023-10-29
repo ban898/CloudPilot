@@ -1,0 +1,7 @@
+/home/david/gitlab-elta/project/SimpleWebApp.Tests/bin/Debug/net7.0/CoverletSourceRootsMapping
+/home/david/gitlab-elta/project/SimpleWebApp.Tests/obj/Debug/net7.0/SimpleWebApp.Tests.csproj.AssemblyReference.cache
+/home/david/gitlab-elta/project/SimpleWebApp.Tests/obj/Debug/net7.0/MvcTestingAppManifest.json
+/home/david/gitlab-elta/project/SimpleWebApp.Tests/obj/Debug/net7.0/SimpleWebApp.Tests.GeneratedMSBuildEditorConfig.editorconfig
+/home/david/gitlab-elta/project/SimpleWebApp.Tests/obj/Debug/net7.0/SimpleWebApp.Tests.AssemblyInfoInputs.cache
+/home/david/gitlab-elta/project/SimpleWebApp.Tests/obj/Debug/net7.0/SimpleWebApp.Tests.AssemblyInfo.cs
+/home/david/gitlab-elta/project/SimpleWebApp.Tests/obj/Debug/net7.0/SimpleWebApp.Tests.csproj.CoreCompileInputs.cache

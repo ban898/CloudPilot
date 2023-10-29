@@ -1,0 +1,68 @@
+eksctl create cluster -f cluster.yaml
+terraform init
+terraform apply
+ssh -i "gitlab_key.pem" ubuntu@ec2-44-201-4-72.compute-1.amazonaws.com
+sudo apt update
+sudo apt install -y docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo usermod -aG docker $USER
+exit
+ssh -i "gitlab_key.pem" ubuntu@ec2-44-201-4-72.compute-1.amazonaws.com
+vim docker-compose.yaml
+docker-compose up -d
+docker ps
+vim external_ip.py
+sudo vim /etc/systemd/system/external=gitlab-config.service
+============================
+[Unit]
+Description=Update GitLab Configuration
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/ubuntu/external_ip.py
+WorkingDirectory=/home/ubuntu
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
+=============================
+sudo systemctl daemon-reload
+sudo systemctl start external-gitlab-config.service
+sudo systemctl status external-gitlab-config.service
+docker exec -it ubuntu-web-1 /bin/bash
+gitlab-rails console
+user = User.where(id: 1).first
+user.password = 'banban765'
+user.password_confirmation = 'banban765'
+user.save!
+then i signed to the root created a non root user, approved it and created a repository (with the UI)
+Created a PAT
+git clone http://44.201.4.72/ban898/project.git to a folder on my personal Laptop
+cp -r /home/david/elta /home/david/gitlab-elta/project/
+git add -A
+git commit -m 'First'
+git push origin main
+kubectl apply -f devops-ns.yaml 
+helm repo add jenkins https://charts.jenkins.io
+helm repo update
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=master"
+kubectl get secret jenkins -o jsonpath="{.data.jenkins-admin-password}" --namespace devops | base64 --decode
+Manually added the following policies : 
+AmazonEBSCSIDriverPolicy
+AmazonEC2FullAccess
+attached them both to the relevant role 
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install nginx-ingress ingress-nginx/ingress-nginx --namespace kube-system --create-namespace
+vim jenkins-ingress.yaml
+kubectl apply -f jenkins-ingress.yaml
+kubectl get svc -n kube-system | grep ingress-nginx-controller
+logged in to jenkins, Installed required Plugins git gitlab kubernetes Credentials
+Added gitlab token
+created a job of type pipeline named it Elta-test (retrived the job end point)
+Added an ingress security rule on port 8080 (to the ELB SG)
+in Gitlab Integrations I configured a jenkins Integration with the relevant webhook
+Pushed a Jenkinsfile to the repository and triggered a job

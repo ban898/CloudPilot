@@ -1,0 +1,21 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: Elta-cluster
+  region: us-east-1   
+
+managedNodeGroups:
+- name: jenkins-nodegroup
+  instanceType: m5.large  
+  desiredCapacity: 2
+  volumeSize: 20
+  amiFamily: Ubuntu2004   
+  ssh:
+    allow: true  
+  iam:
+    withAddonPolicies:
+      autoScaler: true
+      externalDNS: true
+      ebs: true  
+
