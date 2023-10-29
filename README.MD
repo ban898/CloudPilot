@@ -167,7 +167,7 @@ Here's a summary of the setup steps and actions taken:
 
 
 
-The breakdown of the directories and their purposes is as follows:
+# The breakdown of the directories and their purposes is as follows:
 
 ## 1. EKSCTL Directory (`eksctl`)
 
