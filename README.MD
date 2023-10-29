@@ -252,34 +252,34 @@ Here's a summary of the setup steps and actions taken:
 
     ```
     
-    # Jenkins Pipeline Script
+# Jenkins Pipeline Script
 
-    This Jenkins Pipeline script automates the build and deployment of a Dockerized application.
+This Jenkins Pipeline script automates the build and deployment of a Dockerized application.
 
-    ## Agent Configuration
-    - Uses a Jenkins agent labeled as 'jenkins-jenkins-agent' for execution.
+## Agent Configuration
+- Uses a Jenkins agent labeled as 'jenkins-jenkins-agent' for execution.
 
-    ## Environment Variables
-    - Sets environment variables for DockerHub repository, image tag, remote host, and container name.
+## Environment Variables
+- Sets environment variables for DockerHub repository, image tag, remote host, and container name.
 
-    ## Stages
-    1. **Checkout SCM**
-    - Checks out the source code from the source code management system (SCM).
+## Stages
+1. **Checkout SCM**
+- Checks out the source code from the source code management system (SCM).
 
-    2. **Build Docker Image**
-    - Builds a Docker image using the specified DockerHub repository and image tag.
+2. **Build Docker Image**
+- Builds a Docker image using the specified DockerHub repository and image tag.
 
-    3. **Push Docker Image to Docker Hub**
-    - Pushes the built Docker image to Docker Hub.
-    - Uses Docker credentials stored in Jenkins credentials.
+3. **Push Docker Image to Docker Hub**
+- Pushes the built Docker image to Docker Hub.
+- Uses Docker credentials stored in Jenkins credentials.
 
-    4. **Deploy Docker Container**
-    - SSHes into the remote host.
-    - Pulls the Docker image from Docker Hub.
-    - Stops and removes any existing containers with the same name.
-    - Runs a new Docker container with port mapping from 8080 to 80.
+4. **Deploy Docker Container**
+- SSHes into the remote host.
+- Pulls the Docker image from Docker Hub.
+- Stops and removes any existing containers with the same name.
+- Runs a new Docker container with port mapping from 8080 to 80.
 
-    This Jenkins Pipeline automates the process of building a Docker image, pushing it to Docker Hub, and deploying it to a remote host.
+This Jenkins Pipeline automates the process of building a Docker image, pushing it to Docker Hub, and deploying it to a remote host.
 
 
 13. **Pushed the Jenkinsfile and the Dockerfile to the GitLab repository.**
