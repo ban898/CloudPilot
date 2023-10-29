@@ -188,9 +188,102 @@ Here's a summary of the setup steps and actions taken:
     - It uses the SDK 7.0 image for building, copies project files, restores dependencies, and builds the app.
     - It creates a publish stage, publishes the app, and sets up a final stage.
     - In the final stage, it copies the published app and sets the entry point.
+    
+    Jenkinsfile:
+    ```
+    pipeline {
+   agent {
+        label 'jenkins-jenkins-agent'
+    }
 
-    - Pushed the Jenkinsfile and the Dockerfile to the GitLab repository.
-    - Triggered the Jenkins job to initiate the pipeline.                    
+
+    environment {
+        DOCKERHUB_REPO = 'simplewebapp'
+        IMAGE_TAG = 'latest'
+        REMOTE_HOST = '44.199.183.25'
+        CONTAINER_NAME = 'simplewebapp_container'
+    }
+
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def dockerImage = docker.build("${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO}:${IMAGE_TAG}")
+                }
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'Docker', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASS')]) {
+                    script {
+                        docker.withRegistry('https://index.docker.io/v1/', 'DOCKERHUB_USERNAME:DOCKERHUB_PASS') {
+                            def dockerImage = docker.image("${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO}:${IMAGE_TAG}")
+                            dockerImage.push()
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Docker Container') {
+            steps {
+                sshagent(credentials: ['gitlab_key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no $REMOTE_HOST "
+                            docker pull ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO}:${IMAGE_TAG}
+                            docker stop $CONTAINER_NAME || true
+                            docker rm $CONTAINER_NAME || true
+                            docker run --name $CONTAINER_NAME -d -p 8080:80 ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPO}:${IMAGE_TAG}
+
+                        "
+                    """
+                }
+            }
+        }
+    }
+}
+
+    ```
+    
+    # Jenkins Pipeline Script
+
+    This Jenkins Pipeline script automates the build and deployment of a Dockerized application.
+
+    ## Agent Configuration
+    - Uses a Jenkins agent labeled as 'jenkins-jenkins-agent' for execution.
+
+    ## Environment Variables
+    - Sets environment variables for DockerHub repository, image tag, remote host, and container name.
+
+    ## Stages
+    1. **Checkout SCM**
+    - Checks out the source code from the source code management system (SCM).
+
+    2. **Build Docker Image**
+    - Builds a Docker image using the specified DockerHub repository and image tag.
+
+    3. **Push Docker Image to Docker Hub**
+    - Pushes the built Docker image to Docker Hub.
+    - Uses Docker credentials stored in Jenkins credentials.
+
+    4. **Deploy Docker Container**
+    - SSHes into the remote host.
+    - Pulls the Docker image from Docker Hub.
+    - Stops and removes any existing containers with the same name.
+    - Runs a new Docker container with port mapping from 8080 to 80.
+
+    This Jenkins Pipeline automates the process of building a Docker image, pushing it to Docker Hub, and deploying it to a remote host.
+
+
+13. **Pushed the Jenkinsfile and the Dockerfile to the GitLab repository.**
+14. **Triggered the Jenkins job to initiate the pipeline.**                    
     
     
     
