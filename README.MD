@@ -46,7 +46,7 @@ Here's a summary of the setup steps and actions taken:
    - Created a non-root user.
    - Approved the user and created a GitLab repository.
    - Generated a Personal Access Token (PAT).
-   - Cloned the repository to your personal laptop using the following command:
+   - Cloned the repository to my personal laptop using the following command:
 
      ```bash
      git clone http://44.201.4.72/ban898/project.git
