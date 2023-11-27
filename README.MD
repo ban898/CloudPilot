@@ -1,4 +1,5 @@
 # Project Overview
+Independently established and executed a full pipeline for a .NET web application, highlighting my skills in cloud infrastructure, automation, and CI/CD processes. I designed and deployed a Kubernetes cluster using ECK, Terraform, Helm, and eksctl on AWS, comprising a 4-node setup with GitLab, Jenkins master, an agent, and a deployment instance. This project demonstrated my proficiency in integrating diverse technologies for an efficient, scalable software deployment environment.
 
 This project is structured around Infrastructure as Code (IaaC) principles, ensuring clarity and ease of understanding. The key components of this project include:
 
