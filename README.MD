@@ -53,9 +53,9 @@ Here's a summary of the setup steps and actions taken:
      git clone http://44.201.4.72/ban898/project.git
      ```
 
-   - Saved the cloned repository to a folder on your laptop.
+   - Saved the cloned repository to a folder on my laptop.
 
-2. **Create the DevOps Namespace and Install Jenkins Helm Chart and CSI Driver:**
+2. **Create the DevOps Namespace and Installed Jenkins Helm Chart and CSI Driver:**
 
    - Applied the Kubernetes namespace configuration using:
 
@@ -114,7 +114,7 @@ Here's a summary of the setup steps and actions taken:
      kubectl apply -f jenkins-ingress.yaml
      ```
 
-5. **Retrieve the DNS of the ELB:**
+5. **Retrieved the DNS of the ELB:**
 
    - Retrieved the DNS of the Elastic Load Balancer (ELB) using:
 
